@@ -1,12 +1,15 @@
-const axios = require("axios");
-const MongoClient = require("mongodb").MongoClient;
-const assert = require("assert");
+import axios from 'axios';
+import { MongoClient } from 'mongodb';
+//const MongoClient = require("mongodb").MongoClient;
+import assert from 'assert';
 
-// weather station endpoint that delivers json
-let stationUrl = "http://192.168.1.126";
+// import config file for location of resources
+// put your endpoint json URL and mongodb URL here
+// use _config.js as template
+import config from './config.js';
 
 // axios call to fetch json data
-axios.get(stationUrl)
+axios.get(config.stationUrl)
 	.then(res => {
 		// connect to Mongo and send it json data
 		connectMongo(res.data);
@@ -15,13 +18,11 @@ axios.get(stationUrl)
 		console.log(err);
 	});
 
-// host of mongodb
-let mongoUrl = "mongodb://localhost:27017";
 // database name
 let dbName = 'weather';
 
 // initiate the mongo client
-const client = new MongoClient(mongoUrl);
+const client = new MongoClient(config.mongodbUrl);
 
 // function to insert document to mongodb
 const insertDocument = (db, data, callback) => {
@@ -29,7 +30,7 @@ const insertDocument = (db, data, callback) => {
 	// use office as current station name
 	// use json data for temp (F) and humidity (%)
 	// included the current data and time
-	stationObj = {
+	const stationObj = {
 		"station":"office",
 		"tempF": data.tempF,
 		"humidity": data.humidity,
